@@ -1,5 +1,7 @@
 # Dokumentacja systemu do zarządzania małym hotelem/airbnb
 
+Kacper Kotkiewicz
+
 ## 1. Schemat Bazy
 
 ![](_img/schemat.png)
