@@ -20,7 +20,7 @@ class PersonController(
         return personRepository.findAll()
     }
 
-    @PostMapping
+    @PostMapping("/user")
     fun createUser(@RequestBody person: PersonDto): ResponseEntity<Any> {
         try {
             personService.addPerson(person)
@@ -31,7 +31,7 @@ class PersonController(
         return ResponseEntity(ResponseDto("User successfully created", 400), HttpStatus.OK)
     }
 
-    @PostMapping
+    @PostMapping("/admin")
     fun createAdmin(@RequestBody person: PersonDto): ResponseEntity<Any> {
         try {
             personService.addAdmin(person)

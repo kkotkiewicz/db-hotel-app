@@ -1,6 +1,15 @@
-# Dokumentacja systemu do zarządzania małym hotelem/airbnb
+# Dokumentacja
+
+## Temat - System do zarządzania małym hotelem/airbnb
 
 Kacper Kotkiewicz
+
+## Wykorzystane technologie
+
+- SZBD: Oracle
+- Język Backendu: Kotlin
+- Framework Rest: SpringBoot
+- Framework do obsługi bazy danych: Hibernate
 
 ## 1. Schemat Bazy
 
@@ -10,27 +19,39 @@ Kacper Kotkiewicz
 
 ### 2.1 Room
 
-![](_img/schemat.png)
+![](_img/room.png)
+
+Reprezenuje pokój w hotelu - posiada id, numer pokoju, informację czy pokój jest współdzielony (jeżeli pokój jest współdzielony to można zrobić na nim kilka rezerwacji zamiast jednej), liczba miejsc w pokoju i cena za noc.
 
 ### 2.2 Person
 
 ![](_img/person.png)
 
+Reprezentuje dane o koncie osoby korzystającej z aplikacji.
+
 ### 2.3 Reservation
 
 ![](_img/reservation.png)
+
+Przechowuje informacje o rezerwacji, posiada FK na Person oraz pokój, pokazuje również dane o dacie startu i końca rezerwacji, liczbie osób w rezerwacji oraz status rezerwacji ('P' - paid, 'N' - new, 'C' - canceled).
 
 ### 2.4 Extras
 
 ![](_img/extras.png)
 
+Reprezentuje dodatkowe udogodnienia, które można dokupić do rezerwacji.
+
 ### 2.5 Extras_Reservation
 
 ![](_img/extras_reservation.png)
 
+Przechowuje o rezerwacjach na dodatkowe udogodnienia (FK na Reservation oraz Extras).
+
 ### 2.6 Log
 
 ![](_img/log.png)
+
+Przechowuje dane o zmianach w bazie (dodanie nowej rezerwacji lub zmiana statusu)
 
 ## 3. Obiekty i Kolekcje
 
@@ -47,6 +68,8 @@ as object
 )
 ```
 
+Służy do prezentowania informacji o dostępnych udogodnieniach dla danej rezerwacji (extras, które można jeszcze dokupić).
+
 ### 3.2 EXTRAS_INFO
 
 ```sql
@@ -60,6 +83,8 @@ as object
     price int
 )
 ```
+
+Używany do raportowania o rezerwacji udogodnienia.
 
 ### 3.3 ROOM_DETAILS
 
@@ -75,6 +100,8 @@ as object
     available_places int
 )
 ```
+
+Informacje o dostępnych pokojach.
 
 ### 3.4 EXTRAS_DETAILS_ARRAY
 
@@ -120,6 +147,8 @@ begin
 end;
 ```
 
+Sprawdzanie, czy pokój o podanym id istnieje.
+
 ### 4.2 F_PERSON_EXISTS
 
 ```sql
@@ -140,6 +169,8 @@ begin
     return person_exist;
 end;
 ```
+
+Sprawdzanie, czy osoba o podanym id istnieje.
 
 ### 4.3 F_RESERVATION_EXISTS
 
@@ -162,6 +193,8 @@ begin
 end;
 ```
 
+Sprawdzanie, czy rezerwacja o podanym id istnieje.
+
 ### 4.4 F_EXTRAS_EXISTS
 
 ```sql
@@ -179,6 +212,8 @@ begin
     return result;
 end;
 ```
+
+Sprawdzanie, czy udogodnienie o podanym id istnieje.
 
 ### 4.5 F_EXTRAS_RESERVATION_EXISTS
 
@@ -198,6 +233,8 @@ begin
 end;
 ```
 
+Sprawdzanie, czy rezerwacja na udogodnienie o podanym id istnieje.
+
 ### 4.6 F_ROOM_IS_COMMON
 
 ```sql
@@ -210,6 +247,8 @@ begin
     return result;
 end;
 ```
+
+Sprawdzanie, czy pokój o podanym id jest współdzielony.
 
 ### 4.7 F_ROOM_OCCUPIED
 
@@ -233,6 +272,8 @@ begin
     return result;
 end;
 ```
+
+Sprawdzanie, czy pokój o podanym id jest zajęty w podanym przedziale czasowym.
 
 ### 4.8 F_COMMON_ROOM_AVAILABLE_PLACES
 
@@ -258,6 +299,8 @@ begin
     return max_occupied_places - occupied_places;
 end;
 ```
+
+Sprawdzanie, ile miejsc dostępnych zostało w pokoju współdzielonym.
 
 ### 4.9 F_EXTRAS_AVAILABLE
 
@@ -286,6 +329,8 @@ begin
     return result;
 end;
 ```
+
+Sprawdza czy udogodnienie jest dostępne w podanym przedziale czasowym.
 
 ### 4.10 F_GET_RESERVATION_PRICE
 
@@ -317,6 +362,8 @@ begin
 end;
 ```
 
+Oblicza cenę rezerwacji (cena pokoju oraz cena udogodnień).
+
 ### 4.11 F_SAME_EXTRA_RESERVATION_EXISTS
 
 ```sql
@@ -336,6 +383,8 @@ begin
 end;
 ```
 
+Sprawdza, czy rezerwacja na udogodnienie już istnieje (po podaniu FK), żeby nie tworzyć nowej rezerwacji na tę samą rzecz.
+
 ### 4.12 F_GET_PERSON_RESERVATION_IDS
 
 ```sql
@@ -350,6 +399,8 @@ begin
     return result;
 end;
 ```
+
+Zwraca tablicę reservation_id, które zrobiła osoba o danym id.
 
 ### 4.13 F_AVAILABLE_ROOMS
 
@@ -404,6 +455,8 @@ BEGIN
 END;
 ```
 
+Zwraca listę dostępnych pokoi w podanym przedziale czasowym.
+
 ### 4.14 F_GET_RESERVATION_EXTRAS
 
 ```sql
@@ -421,6 +474,8 @@ begin
     return extras_information;
 end;
 ```
+
+Zwraca tablicę informacji o udogodnieniach powiązanych z rezerwacją pokoju o podanym id.
 
 ### 4.15 F_RESERVATION_EXTRAS_AVAILABLE
 
@@ -458,6 +513,8 @@ begin
 end;
 ```
 
+Zwraca tablicę informacji o dostępnych udogonieniach dla rezerwacji pokoju.
+
 ## 5. Procedury
 
 ### 5.1 P_ADD_ADMIN
@@ -472,6 +529,8 @@ begin
 end;
 ```
 
+Procedura dodania do tablicy Person użytkownika o prawach administratora.
+
 ### 5.2 P_ADD_USER
 
 ```sql
@@ -483,6 +542,8 @@ begin
     VALUES (fn, ln, email, password);
 end;
 ```
+
+Procedura dodania do tablicy Person użytkownika bez praw administratora.
 
 ### 5.3 P_PAY_FOR_RESERVATION
 
@@ -511,6 +572,8 @@ begin
 end;
 ```
 
+Procedura aktualizująca status rezerwacji na zapłaconą.
+
 ### 5.4 P_CANCEL_RESERVATION
 
 ```sql
@@ -534,4 +597,989 @@ begin
 end;
 ```
 
+Procedura aktualizująca status rezerwacji na anulowaną.
+
+### 5.5 P_RESTORE_RESERVATION
+
+```sql
+create procedure p_restore_reservation(r_id RESERVATION.reservation_id%type)
+as
+    st char;
+    rid int;
+    ppl int;
+    sd date;
+    ed date;
+begin
+    if r_id is null then
+        raise_application_error(-20001, 'Reservation id cannot be null');
+    end if;
+
+    select status into st from reservation where reservation_id = r_id;
+    select ROOM_ID into rid from reservation where reservation_id = r_id;
+    select NO_OF_PEOPLE into ppl from reservation where reservation_id = r_id;
+    select START_DATE into sd from RESERVATION where RESERVATION_ID = r_id;
+    select END_DATE into ed from RESERVATION where RESERVATION_ID = r_id;
+
+    if st = 'N' or st = 'P' then
+        raise_application_error(-20002, 'Reservation is not cancel');
+    end if;
+
+    if F_ROOM_IS_COMMON(rid) = 1 then
+        if F_COMMON_ROOM_AVAILABLE_PLACES(rid, sd, ed) < ppl then
+            raise_application_error(-20002, 'Not enough places in room');
+        end if;
+    end if;
+
+    if F_ROOM_IS_COMMON(rid) = 0 then
+        if F_ROOM_OCCUPIED(rid, sd, ed) = 1 then
+            raise_application_error(-20003, 'Room already occupied');
+        end if;
+    end if;
+
+    update reservation set status = 'N' where RESERVATION_ID = r_id;
+end;
+```
+
+Procedura aktualizująca status rezerwacji na nową.
+
+### 5.6 P_ADD_RESERVATION
+
+```sql
+create procedure p_add_reservation(rm_id room.room_id%type, pn_id person.person_id%type,
+                date_from date, date_to date, no_people number)
+as
+begin
+    insert into RESERVATION (ROOM_ID, PERSON_ID, STATUS, START_DATE, END_DATE, NO_OF_PEOPLE)
+    values (rm_id, pn_id, 'N', date_from, date_to, no_people);
+end;
+```
+
+Procedura do dodawania rezerwacji.
+
+### 5.7 P_ADD_EXTRAS_RESERVATION
+
+```sql
+create or replace procedure p_add_extras_reservation(ex_id extras.extras_id%type, r_id reservation.reservation_id%type)
+as
+    date_from date;
+    date_to date;
+    people_number number;
+begin
+
+    select R.START_DATE, R.END_DATE, R.NO_OF_PEOPLE
+     into date_from, date_to, people_number from RESERVATION R
+    where R.RESERVATION_ID = r_id;
+
+    if F_EXTRAS_AVAILABLE(ex_id, date_from, date_to) < people_number then
+        raise_application_error(-20003, 'Extras already occupied');
+    end if;
+
+    if F_SAME_EXTRA_RESERVATION_EXISTS(r_id, ex_id) != 0 then
+        update EXTRAS_RESERVATION set STATUS = 'N'
+        where RESERVATION_ID = r_id and extras_id = ex_id;
+    end if;
+
+    if F_SAME_EXTRA_RESERVATION_EXISTS(r_id, ex_id) = 0 then
+        insert into EXTRAS_RESERVATION (EXTRAS_ID, RESERVATION_ID, STATUS)
+        VALUES (ex_id, r_id, 'N');
+    end if;
+end;
+```
+
+Procedura do dodawania rezerwacji na udogodnienia.
+
+### 5.8 P_CANCEL_EXTRAS_RESERVATION
+
+```sql
+create procedure p_cancel_extras_reservation(exr_id EXTRAS_RESERVATION.EXTRAS_RESERVATION_ID%type)
+as
+    st char;
+begin
+    if exr_id is null then
+        raise_application_error(-20001, 'Extras reservation id cannot be null');
+    end if;
+
+    select status into st from extras_reservation where extras_reservation_id = exr_id;
+
+    if st = 'C' then
+        raise_application_error(-20002, 'Cannot cancel reservation that is already canceled');
+    end if;
+
+    update EXTRAS_RESERVATION set status = 'C' where EXTRAS_RESERVATION_ID = exr_id;
+end;
+```
+
+Procedura do aktualizowania statusu rezerwacji na udogodnienia na anulowaną.
+
 ## 6. Triggery
+
+### 6.1 RESERVATION
+
+#### 6.1.1 T_ADD_LOG_MODIFY_RESERVATION_STATUS
+
+```sql
+create or replace trigger T_ADD_LOG_MODIFY_RESERVATION_STATUS
+    after update
+    on RESERVATION
+    for each row
+begin
+    if :NEW.status = 'C' then
+        update EXTRAS_RESERVATION set STATUS = 'C' where RESERVATION_ID = :NEW.RESERVATION_ID;
+    end if;
+
+    insert into log (RESERVATION_ID, LOG_DATE, STATUS)
+    values (:NEW.RESERVATION_ID, SYSDATE, :NEW.STATUS);
+end;
+```
+
+Po aktualizowaniu rezerwacji dodaje wpis w tabeli Log.
+
+#### 6.1.2 T_ADD_RESERVATION
+
+```sql
+create or replace trigger T_ADD_RESERVATION
+    before insert
+    on RESERVATION
+    for each row
+declare
+begin
+    if f_room_exists(:new.ROOM_ID) = 0 then
+        raise_application_error(-20001, 'There is no room with given id');
+    end if;
+
+    if f_person_exists(:new.person_id) = 0 then
+        raise_application_error(-20004, 'There is no person with given id');
+    end if;
+
+    if :NEW.START_DATE >= :NEW.END_DATE or :NEW.START_DATE < SYSDATE then
+        raise_application_error(-20005, 'Wrong date given');
+    end if;
+
+    if f_room_is_common(:NEW.ROOM_ID) = 1 then
+        if f_common_room_available_places(:new.ROOM_ID, :new.START_DATE, :new.END_DATE) < :new.NO_OF_PEOPLE then
+            raise_application_error(-20002, 'Not enough places in this room');
+        end if;
+    end if;
+
+    if f_room_occupied(:new.ROOM_ID, :new.START_DATE, :new.END_DATE) = 1 then
+        raise_application_error(-20003, 'Room is already occupied on this date');
+    end if;
+end;
+```
+
+Waliduje dane podczas dodawania rezerwacji.
+
+#### 6.1.3 T_LOG_AFTER_ADD_RESERVATION
+
+```sql
+create or replace trigger T_LOG_AFTER_ADD_RESERVATION
+    after insert
+    on RESERVATION
+    for each row
+declare
+begin
+    insert into log (RESERVATION_ID, LOG_DATE, STATUS) values (:new.reservation_id, sysdate, :new.status);
+end;
+```
+
+Po dodaniu rezerwacji dodaje wpis w tabeli Log.
+
+#### 6.1.4 T_MODIFY_RESERVATION_STATUS
+
+```sql
+create trigger T_MODIFY_RESERVATION_STATUS
+    before update
+    on RESERVATION
+    for each row
+declare
+    room_places number;
+begin
+    if (:OLD.status != :NEW.status) then
+        if :OLD.status = 'P' then
+            raise_application_error(-20001, 'Cannot cancel paid room');
+        end if;
+    end if;
+end;
+```
+
+Waliduje dane podczas zmiany statusu rezerwacji.
+
+#### 6.1.5 T_PREVENT_DELETE_RESERVATION
+
+```sql
+create trigger T_PREVENT_DELETE_RESERVATION
+    before delete
+    on RESERVATION
+    for each row
+begin
+    raise_application_error(-20001, 'Cannot remove reservation from database');
+end;
+```
+
+Nie pozwala na usunięcie rezerwacji.
+
+### 6.2 EXTRAS_RESERVATION
+
+#### 6.2.1 T_ADD_EXTRAS_RESERVATION
+
+```sql
+CREATE OR REPLACE TRIGGER BD_411400.T_ADD_EXTRAS_RESERVATION
+    BEFORE INSERT
+    ON BD_411400.EXTRAS_RESERVATION
+    FOR EACH ROW
+DECLARE
+    date_from DATE;
+    date_to DATE;
+    no_of_extras NUMBER;
+    r_st char;
+BEGIN
+    IF BD_411400.f_reservation_exists(:new.RESERVATION_ID) = 0 THEN
+        RAISE_APPLICATION_ERROR(-20001, 'There is no reservation with the given ID');
+    END IF;
+
+    IF BD_411400.f_extras_exists(:new.EXTRAS_ID) = 0 THEN
+        RAISE_APPLICATION_ERROR(-20004, 'There is no extras with the given ID');
+    END IF;
+
+    SELECT r.START_DATE, r.END_DATE, r.NO_OF_PEOPLE, r.STATUS
+    INTO date_from, date_to, no_of_extras, r_st
+    FROM BD_411400.RESERVATION r
+    WHERE r.RESERVATION_ID = :new.RESERVATION_ID;
+
+    if r_st != 'N' then
+        raise_application_error(-20006, 'Cannot add extras to paid or canceled reservation');
+    end if;
+
+    IF BD_411400.f_extras_available(:new.EXTRAS_ID, date_from, date_to) < no_of_extras THEN
+        RAISE_APPLICATION_ERROR(-20005, 'Not enough extras available');
+    END IF;
+END;
+```
+
+Waliduje dane podczas dodawania nowej rezerwacji.
+
+#### 6.2.2 T_LOG_AFTER_MODIFY_EXTRAS_RESERVATION
+
+```sql
+create or replace trigger T_LOG_AFTER_MODIFY_EXTRAS_RESERVATION
+    after update
+    on EXTRAS_RESERVATION
+    for each row
+declare
+begin
+    insert into log (RESERVATION_ID, EXTRAS_ID, LOG_DATE, STATUS) values (:new.reservation_id, :new.extras_id, sysdate, :new.status);
+end;
+```
+
+Dodaje wpis w tabeli Log po modyfikacji statusu rezerwacji.
+
+#### 6.2.3 T_LOG_AFTER_MODIFY_EXTRAS_RESERVATION
+
+```sql
+create trigger T_LOG_AFTER_MODIFY_EXTRAS_RESERVATION
+    after update
+    on EXTRAS_RESERVATION
+    for each row
+declare
+begin
+    insert into log (RESERVATION_ID, EXTRAS_ID, LOG_DATE, STATUS) values (:new.reservation_id, :new.extras_id, sysdate, :new.status);
+end;
+```
+
+Dodaje wpis w tabeli log po dodaniu rezerwacji na udogodnienie.
+
+#### 6.2.4 T_MODIFY_EXTRAS_RESERVATION_STATUS
+
+```sql
+create or replace trigger T_MODIFY_EXTRAS_RESERVATION_STATUS
+    before update
+    on EXTRAS_RESERVATION
+    for each row
+begin
+    if (:OLD.status != :NEW.status) then
+        if :OLD.status = 'P' then
+            raise_application_error(-20001, 'Cannot cancel paid room');
+        end if;
+    end if;
+end;
+```
+
+Waliduje dane podczas zmiany statusu rezerwacji na udogodnienia.
+
+#### 6.2.5 T_PREVENT_DELETE_EXTRAS_RESERVATION
+
+```sql
+create trigger T_PREVENT_DELETE_EXTRAS_RESERVATION
+    before delete
+    on EXTRAS_RESERVATION
+    for each row
+begin
+    raise_application_error(-20001, 'Cannot remove reservation from database');
+end;
+```
+
+Nie pozwala na usunięcie rezerwacji udogodnienia.
+
+## 7. Backend
+
+Nie będę zamieszczał całego kodu jak wyżej (jest on w repozytorium) i skupię się na kodzie, który będzie używany w prezentacji - operacje CRUD, transakcje, raportowanie.
+
+### 7.1 Controllery
+
+#### 7.1.1 ReservationController
+
+```java
+@Controller
+@RequestMapping("/reservations")
+class ReservationController(
+    private val reservationRepository: ReservationRepository,
+    private val reservationService: ReservationService,
+    private val extrasReservationService: ExtrasReservationService,
+    private val personService: PersonService
+) {
+
+    @GetMapping("/{reservationId}")
+    fun getReservationById(@PathVariable reservationId: Long): ResponseEntity<Any> {
+        val reservation: Optional<Reservation> = reservationRepository.findById(reservationId)
+        if (reservation.isEmpty) {
+            return ResponseEntity(ResponseDto("Reservation not Found", 404), HttpStatus.NOT_FOUND)
+        }
+
+        val reservationPrice = reservationService.getReservationPrice(reservationId)
+        val extrasInfo = extrasReservationService.getReservationExtras(reservationId)
+
+        val response = reservationService.createReservationResponse(
+            reservation.get(), reservationPrice, extrasInfo)
+
+        return ResponseEntity(response, HttpStatus.OK)
+    }
+
+    @PostMapping
+    fun addReservation(@RequestBody reservation: ReservationDto): ResponseEntity<Any> {
+        try {
+            reservationService.addReservation(reservation)
+            return ResponseEntity(ResponseDto("Successfully added new reservation", 200), HttpStatus.OK)
+        } catch (exception: Exception) {
+            println(exception.message)
+            return ResponseEntity(ResponseDto("There was an error during adding new reservation", 401), HttpStatus.BAD_REQUEST)
+        }
+    }
+
+    @PutMapping("/{reservationId}")
+    fun updateReservationStatus(@PathVariable reservationId: Long,
+                                @RequestParam rStatus: Char): ResponseEntity<Any> {
+        try {
+            when (rStatus) {
+                'C' -> {
+                    reservationService.cancelReservation(reservationId)
+                }
+                'P' -> {
+                    reservationService.payForReservation(reservationId)
+                }
+                'N' -> {
+                    reservationService.restoreReservationStatus(reservationId)
+                }
+                else -> {
+                    return ResponseEntity(ResponseDto("Given status must be either 'N', 'P' or 'C'", 403), HttpStatus.BAD_REQUEST)
+                }
+            }
+        } catch (exception: Exception) {
+            println(exception.message)
+            return ResponseEntity(ResponseDto("There was an error during modifying reservation status", 403), HttpStatus.BAD_REQUEST)
+        }
+
+        return ResponseEntity(ResponseDto("Successfully modified reservation status",200), HttpStatus.OK)
+    }
+
+    @GetMapping("/person/{personId}")
+    fun getAllPersonReservations(@PathVariable personId: Long): ResponseEntity<Any> {
+        try {
+            val result = personService.getPersonReservationIds(personId)
+            val response = result.map { resId ->
+                reservationService.createReservationResponse(
+                    reservationRepository.findById(resId).get(),
+                    reservationService.getReservationPrice(resId),
+                    extrasReservationService.getReservationExtras(resId)
+                )
+            }
+            return ResponseEntity(response, HttpStatus.OK)
+        } catch (exception: Exception) {
+            println(exception.message)
+            return ResponseEntity(ResponseDto("Error during finding reservations with given Id",401), HttpStatus.BAD_REQUEST)
+        }
+    }
+}
+```
+
+Controller służący do obsługiwania zapytań HTTP dotyczących Rezerwacji pokoi. Można w nim znaleźć 4 enpointy kolejno do uzyskania informacji o konkretnej rezerwacji o podanym id, dodawania nowej rezerwacji, aktualizacji stanu rezerwacji oraz raportu dotyczącego rezerwacji dokonanych poprzez konkretną osobę o podanym id.
+
+#### 7.1.2 ExtrasReservationController
+
+```java
+@Controller
+@RequestMapping("/extras")
+class ExtrasReservationController(
+    private val extrasReservationRepository: ExtrasReservationRepository,
+    private val extrasReservationService: ExtrasReservationService
+) {
+
+    @GetMapping("/{extrasReservationId}")
+    fun getExtrasReservationById(@PathVariable extrasReservationId: Long): ResponseEntity<Any> {
+        val eReservation: Optional<ExtrasReservation> = extrasReservationRepository.findById(extrasReservationId)
+        if (eReservation.isEmpty) {
+            return ResponseEntity(ResponseDto("Extras reservation not Found", 404), HttpStatus.NOT_FOUND)
+        }
+        return ResponseEntity(eReservation.get(), HttpStatus.OK)
+    }
+
+    @GetMapping("/available/{reservationId}")
+    fun getAvailableExtrasForReservation(@PathVariable reservationId: Long): ResponseEntity<Any> {
+        val result: List<ExtrasDetailsDto>
+        try {
+            result = extrasReservationService.getAvailableExtrasForReservation(reservationId)
+        } catch (exception: Exception) {
+            println(exception.message)
+            return ResponseEntity(ResponseDto("Cannot get extras for given Id", 403), HttpStatus.BAD_REQUEST)
+        }
+        return ResponseEntity(result, HttpStatus.OK)
+    }
+
+    @PostMapping
+    fun addExtrasReservation(@RequestBody eReservation: ExtrasReservationDto): ResponseEntity<Any> {
+        try {
+            extrasReservationService.addExtrasReservation(eReservation)
+        } catch (exception: Exception) {
+            println(exception.message)
+            return ResponseEntity(ResponseDto("There was an error during adding new extras reservation", 403), HttpStatus.BAD_REQUEST)
+        }
+        return ResponseEntity(ResponseDto("Successfully added new extras reservation", 200), HttpStatus.OK)
+    }
+
+    @DeleteMapping("/{extrasReservationId}")
+    fun deleteExtrasReservation(@PathVariable extrasReservationId: Long): ResponseEntity<Any> {
+        try {
+            extrasReservationService.cancelExtrasReservation(extrasReservationId)
+        } catch (exception: Exception) {
+            println(exception)
+            return ResponseEntity(ResponseDto("There was an error during deleting extras reservation", 403), HttpStatus.BAD_REQUEST)
+        }
+        return ResponseEntity(ResponseDto("Successfully deleted extras reservation", 200), HttpStatus.OK)
+    }
+}
+```
+
+Controller służący do obsługiwania zapytań HTTP dotyczących rezerwacji udogodnień. 4 endpointy służące kolejno do otrzymania informacji o konkretnej rezerwacji udogodnienia, otrzymania informacji o dostępnych udogodnieniach dla rezerwacji pokoju, dodanie nowej rezerwacji udogodnienia oraz usunięcie (a właściwie anulowanie) rezerwacji udogodnienia.
+
+### 7.2 Serwisy
+
+#### 7.2.1
+
+```java
+@Service
+class ReservationService {
+    @PersistenceContext
+    private lateinit var entityManager: EntityManager
+
+    @Transactional
+    fun addReservation(res: ReservationDto) {
+        entityManager.createStoredProcedureQuery("p_add_reservation")
+            .registerStoredProcedureParameter("rm_id", Long::class.java, ParameterMode.IN)
+            .registerStoredProcedureParameter("pn_id", Long::class.java, ParameterMode.IN)
+            .registerStoredProcedureParameter("date_from", LocalDate::class.java, ParameterMode.IN)
+            .registerStoredProcedureParameter("date_to", LocalDate::class.java, ParameterMode.IN)
+            .registerStoredProcedureParameter("no_people", Integer::class.java, ParameterMode.IN)
+            .setParameter("rm_id", res.roomId)
+            .setParameter("pn_id", res.personId)
+            .setParameter("date_from", res.startDate)
+            .setParameter("date_to", res.endDate)
+            .setParameter("no_people", res.numberOfPeople)
+            .executeUpdate()
+    }
+
+    @Transactional
+    fun cancelReservation(resID: Long) {
+        entityManager.createStoredProcedureQuery("p_cancel_reservation")
+            .registerStoredProcedureParameter("r_id", Long::class.java, ParameterMode.IN)
+            .setParameter("r_id", resID)
+            .executeUpdate()
+    }
+
+    @Transactional
+    fun payForReservation(resID: Long) {
+        entityManager.createStoredProcedureQuery("p_pay_for_reservation")
+            .registerStoredProcedureParameter("r_id", Long::class.java, ParameterMode.IN)
+            .setParameter("r_id", resID)
+            .executeUpdate()
+    }
+
+    @Transactional
+    fun restoreReservationStatus(resID: Long) {
+        entityManager.createStoredProcedureQuery("p_restore_reservation")
+            .registerStoredProcedureParameter("r_id", Long::class.java, ParameterMode.IN)
+            .setParameter("r_id", resID)
+            .executeUpdate()
+    }
+
+    fun getReservationPrice(reservationId: Long): Double {
+        val query = entityManager.createNativeQuery(
+            "SELECT f_get_reservation_price(:reservation_id_check) FROM DUAL"
+        )
+        query.setParameter("reservation_id_check", reservationId)
+
+        val result = query.singleResult
+        return (result as Number).toDouble()
+    }
+
+    fun getAvailableRooms(dateFrom: LocalDate, dateTo: LocalDate): List<RoomDetailsDto> {
+        val query = entityManager.createNativeQuery(
+            "SELECT * FROM f_available_rooms(:date_from, :date_to)"
+        )
+        query.setParameter("date_from", dateFrom)
+        query.setParameter("date_to", dateTo)
+
+        return query.resultList.map { result ->
+            if (result is Array<*>) {
+                if (result[5] == null) {
+                    RoomDetailsDto(
+                        roomId = (result[0] as BigDecimal).toLong(),
+                        roomNumber = (result[1] as BigDecimal).toLong(),
+                        common = (result[2] as BigDecimal).toLong(),
+                        price = (result[3] as BigDecimal).toLong(),
+                        maxNoPlaces = (result[4] as BigDecimal).toLong(),
+                        availablePlaces = null
+                    )
+                } else {
+                RoomDetailsDto(
+                    roomId = (result[0] as BigDecimal).toLong(),
+                    roomNumber = (result[1] as BigDecimal).toLong(),
+                    common = (result[2] as BigDecimal).toLong(),
+                    price = (result[3] as BigDecimal).toLong(),
+                    maxNoPlaces = (result[4] as BigDecimal).toLong(),
+                    availablePlaces = (result[5] as BigDecimal).toLong()
+                )}
+            } else {
+                throw IllegalArgumentException("Invalid result type")
+            }
+        }
+
+    }
+
+    fun createReservationResponse(reservation: Reservation, price: Double, extrasInfo: List<ExtrasReservationInfoDto>): ReservationInfoDto {
+        return ReservationInfoDto(
+            reservation.id, reservation.room?.id, reservation.person?.id, reservation.startDate,
+            reservation.endDate, reservation.status, reservation.noOfPeople, price, extrasInfo
+        )
+    }
+}
+```
+
+#### 7.2.2 ExtrasReservationService
+
+```java
+@Service
+class ExtrasReservationService {
+    @PersistenceContext
+    private lateinit var entityManager: EntityManager
+
+    @Transactional
+    fun addExtrasReservation(extResDto: ExtrasReservationDto) {
+        entityManager.createStoredProcedureQuery("p_add_extras_reservation")
+            .registerStoredProcedureParameter("ex_id", Long::class.java, ParameterMode.IN)
+            .registerStoredProcedureParameter("r_id", Long::class.java, ParameterMode.IN)
+            .setParameter("ex_id", extResDto.extrasId)
+            .setParameter("r_id", extResDto.reservationId)
+            .executeUpdate()
+    }
+
+    @Transactional
+    fun cancelExtrasReservation(extrasReservationId: Long) {
+        entityManager.createStoredProcedureQuery("p_cancel_extras_reservation")
+            .registerStoredProcedureParameter("exr_id", Long::class.java, ParameterMode.IN)
+            .setParameter("exr_id", extrasReservationId)
+            .executeUpdate()
+    }
+
+    fun getReservationExtras(reservationId: Long): List<ExtrasReservationInfoDto> {
+        val query = entityManager.createNativeQuery(
+            "SELECT * FROM f_get_reservation_extras(:r_id)")
+        query.setParameter("r_id", reservationId)
+
+        return query.resultList.map { result ->
+            if (result is Array<*>) {
+                ExtrasReservationInfoDto(
+                    extrasReservationId = (result[0] as BigDecimal).toLong(),
+                    extrasId = (result[1] as BigDecimal).toLong(),
+                    extrasName = result[2] as String,
+                    st = result[3] as Char,
+                    price = (result[4] as BigDecimal).toLong()
+                )
+            } else {
+                throw IllegalArgumentException("Invalid result type")
+            }
+        }
+    }
+
+    fun getAvailableExtrasForReservation(reservationId: Long): List<ExtrasDetailsDto> {
+        val query = entityManager.createNativeQuery(
+            "SELECT * FROM f_reservation_extras_available(:r_id)"
+        )
+        query.setParameter("r_id", reservationId)
+
+        return query.resultList.map { result ->
+            if (result is Array<*>) {
+                ExtrasDetailsDto(
+                    extrasId = (result[0] as BigDecimal).toLong(),
+                    extrasName = result[1] as String,
+                    extrasNumber = (result[2] as BigDecimal).toLong(),
+                    price = (result[3] as BigDecimal).toLong()
+                )
+            } else {
+                throw IllegalArgumentException("Invalid result type")
+            }
+        }
+    }
+}
+```
+
+Oba Serwisy korzystają z funkcji i procedur zaprogramowanych w bazie danych oraz definicji umieszczonych wyżej. Jest to proste korzystanie z EntityMangera oraz podanie odpowiednich parametrów, a następnie wykonanie procedury lub zrzutowanie informacji na odpowiednie Recordy i zwrócenie z powrotem do Controllera.
+
+### 7.3 Data Transfer Objects
+
+#### 7.3.1 ExtrasReservationDto
+
+```
+data class ExtrasReservationDto(
+    val extrasId: Long,
+    val reservationId: Long
+)
+```
+
+#### 7.3.2 ReservationDto
+
+```
+data class ReservationDto(
+    val roomId: Long,
+    val personId: Long,
+    val startDate: LocalDate,
+    val endDate: LocalDate,
+    val numberOfPeople: Int
+)
+```
+
+#### 7.3.3 ResponseDto
+
+```
+data class ResponseDto(
+    val message: String,
+    val status: Int
+)
+```
+
+#### 7.3.4 ReservationInfoDto
+
+```
+data class ReservationInfoDto(
+    val reservationId: Long?,
+    val roomId: Long?,
+    val personId: Long?,
+    val startDate: LocalDate?,
+    val endDate: LocalDate?,
+    val status: Char?,
+    val numberOfPeople: Long?,
+    val totalPrice: Double,
+    val extrasInfo: List<ExtrasReservationInfoDto>
+)
+```
+
+#### 7.3.4 ExtrasReservationInfoDto
+
+```
+data class ExtrasReservationInfoDto(
+    val extrasReservationId: Long,
+    val extrasId: Long,
+    val extrasName: String,
+    val st: Char,
+    val price: Long
+)
+```
+
+#### 7.3.5 ExtrasDetailsDto
+
+```
+data class ExtrasDetailsDto(
+    val extrasId: Long,
+    val extrasName: String,
+    val extrasNumber: Long,
+    val price: Long
+)
+```
+
+#### 7.3.6 RoomDetailsDto
+
+```
+data class RoomDetailsDto(
+    val roomId: Long,
+    val roomNumber: Long,
+    val common: Long,
+    val price: Long,
+    val maxNoPlaces: Long,
+    val availablePlaces: Long?
+)
+```
+
+### 7.4 Data Access Objects
+
+#### 7.4.1 Reservation
+
+```
+@Entity
+@Table(name = "RESERVATION")
+open class Reservation {
+    @Id
+    @Column(name = "RESERVATION_ID", nullable = false)
+    open var id: Long? = null
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OnDelete(action = OnDeleteAction.RESTRICT)
+    @JoinColumn(name = "ROOM_ID", nullable = false)
+    open var room: Room? = null
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @OnDelete(action = OnDeleteAction.RESTRICT)
+    @JoinColumn(name = "PERSON_ID", nullable = false)
+    open var person: Person? = null
+
+    @Column(name = "STATUS", nullable = false)
+    open var status: Char? = null
+
+    @Column(name = "START_DATE", nullable = false)
+    open var startDate: LocalDate? = null
+
+    @Column(name = "END_DATE", nullable = false)
+    open var endDate: LocalDate? = null
+
+    @Column(name = "NO_OF_PEOPLE", nullable = false)
+    open var noOfPeople: Long? = null
+}
+```
+
+#### 7.4.2 ExtrasReservation
+
+```
+@Entity
+@Table(name = "EXTRAS_RESERVATION")
+open class ExtrasReservation {
+    @Id
+    @Column(name = "EXTRAS_RESERVATION_ID", nullable = false)
+    open var id: Long? = null
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.RESTRICT)
+    @JoinColumn(name = "EXTRAS_ID")
+    open var extras: Extra? = null
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @OnDelete(action = OnDeleteAction.RESTRICT)
+    @JoinColumn(name = "RESERVATION_ID")
+    open var reservation: Reservation? = null
+
+    @Column(name = "STATUS")
+    open var status: Boolean? = null
+}
+```
+
+## 8. Prezentacja działania
+
+### 8.1 CRUD (a właściwie CRU)
+
+Jako, że w stworzonej aplikacji nie da się usuwać wierszy to zaprezentuję operacje CRU.
+
+#### 8.1.1 READ
+
+![](./_img/get_reservation.png)
+
+Response
+
+```
+{
+    "reservationId": 44,
+    "roomId": 4,
+    "personId": 1,
+    "startDate": "2024-06-04",
+    "endDate": "2024-06-05",
+    "status": "N",
+    "numberOfPeople": 2,
+    "totalPrice": 120.0,
+    "extrasInfo": [
+        {
+            "extrasReservationId": 8,
+            "extrasId": 2,
+            "extrasName": "Bike",
+            "st": "C",
+            "price": 30
+        },
+        {
+            "extrasReservationId": 21,
+            "extrasId": 1,
+            "extrasName": "Towel",
+            "st": "N",
+            "price": 5
+        }
+    ]
+}
+```
+
+#### 8.1.2 UPDATE
+
+![](./_img/update1.png)
+
+![](./_img/update2.png)
+
+```
+{
+    "reservationId": 44,
+    "roomId": 4,
+    "personId": 1,
+    "startDate": "2024-06-04",
+    "endDate": "2024-06-05",
+    "status": "P",
+    "numberOfPeople": 2,
+    "totalPrice": 120.0,
+    "extrasInfo": [
+        {
+            "extrasReservationId": 8,
+            "extrasId": 2,
+            "extrasName": "Bike",
+            "st": "C",
+            "price": 30
+        },
+        {
+            "extrasReservationId": 21,
+            "extrasId": 1,
+            "extrasName": "Towel",
+            "st": "P",
+            "price": 5
+        }
+    ]
+}
+```
+
+#### 8.1.3 CREATE
+
+![](./_img/create1.png)
+
+![](./_img/create2.png)
+
+```
+{
+    "reservationId": 81,
+    "roomId": 3,
+    "personId": 1,
+    "startDate": "2024-06-29",
+    "endDate": "2024-07-15",
+    "status": "N",
+    "numberOfPeople": 2,
+    "totalPrice": 1600.0,
+    "extrasInfo": []
+}
+```
+
+### 8.2 Transakcyjność
+
+Spróbujemy zrobić rezerwację nachodzącą na termin przed chwilą stworzonej Rezerwacji
+
+![](./_img/transakcja.png)
+
+Widać, że akcja się nie powiodła, ponieważ pokój jest już zajęty.
+
+### 8.3 Raportowanie
+
+![](./_img/raport.png)
+
+```
+[
+    {
+        "reservationId": 44,
+        "roomId": 4,
+        "personId": 1,
+        "startDate": "2024-06-04",
+        "endDate": "2024-06-05",
+        "status": "P",
+        "numberOfPeople": 2,
+        "totalPrice": 120.0,
+        "extrasInfo": [
+            {
+                "extrasReservationId": 8,
+                "extrasId": 2,
+                "extrasName": "Bike",
+                "st": "C",
+                "price": 30
+            },
+            {
+                "extrasReservationId": 21,
+                "extrasId": 1,
+                "extrasName": "Towel",
+                "st": "P",
+                "price": 5
+            }
+        ]
+    },
+    {
+        "reservationId": 63,
+        "roomId": 4,
+        "personId": 1,
+        "startDate": "2024-06-21",
+        "endDate": "2024-06-28",
+        "status": "N",
+        "numberOfPeople": 2,
+        "totalPrice": 700.0,
+        "extrasInfo": []
+    },
+    {
+        "reservationId": 8,
+        "roomId": 1,
+        "personId": 1,
+        "startDate": "2024-05-22",
+        "endDate": "2024-05-31",
+        "status": "P",
+        "numberOfPeople": 2,
+        "totalPrice": 900.0,
+        "extrasInfo": []
+    },
+    {
+        "reservationId": 66,
+        "roomId": 3,
+        "personId": 1,
+        "startDate": "2024-06-21",
+        "endDate": "2024-06-28",
+        "status": "N",
+        "numberOfPeople": 2,
+        "totalPrice": 700.0,
+        "extrasInfo": []
+    },
+    {
+        "reservationId": 23,
+        "roomId": 1,
+        "personId": 1,
+        "startDate": "2024-06-01",
+        "endDate": "2024-06-03",
+        "status": "P",
+        "numberOfPeople": 2,
+        "totalPrice": 200.0,
+        "extrasInfo": []
+    },
+    {
+        "reservationId": 81,
+        "roomId": 3,
+        "personId": 1,
+        "startDate": "2024-06-29",
+        "endDate": "2024-07-15",
+        "status": "N",
+        "numberOfPeople": 2,
+        "totalPrice": 1600.0,
+        "extrasInfo": []
+    }
+]
+```
+
+Mamy tu złożone zapytanie, które pokazuje zbiorowo wszystkie rezerwacje użytkownika wraz z detalami.
